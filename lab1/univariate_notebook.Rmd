@@ -1,6 +1,6 @@
 ```{r}
 # train data
-data = read.csv('D:/fak/DM/DataMiningLaboratory/data/train.csv')
+data = read.csv('../data/train.csv')
 data = data[, c("Elevation", "Aspect", "Slope")]
 data
 ```
@@ -48,5 +48,16 @@ boxplot(data[, 3], xlab='Slope')
 plot(density(data[, 1]), xlab='Elevation')
 plot(density(data[, 2]), xlab='Aspect')
 plot(density(data[, 3]), xlab='Slope')
+```
+
+```{r}
+# freq for categorial atributes
+data = read.csv('../data/train.csv')
+data = data[, c('Wilderness_Area1', 'Wilderness_Area2', 'Wilderness_Area3', 'Wilderness_Area4', 'Cover_Type')]
+qplot(as.factor(data[, 1]), xlab='Wilderness_Area1')
+qplot(as.factor(data[, 2]), xlab='Wilderness_Area2')
+qplot(as.factor(data[, 3]), xlab='Wilderness_Area3')
+qplot(as.factor(data[, 4]), xlab='Wilderness_Area4')
+qplot(as.factor(data[, 5]), xlab='Cover Type')
 ```
 
