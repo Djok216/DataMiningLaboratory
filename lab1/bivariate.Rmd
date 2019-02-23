@@ -34,7 +34,11 @@ abline(lm(y ~ x, data = data), col = "blue")
 
 x <- data$Cover_Type
 y <- data$Horizontal_Distance_To_Roadways
-plot(x, y, ylab='Cover_Type', xlab='Horizontal_Distance_To_Roadways', main='Scatter plot of CoverType and Horizontal_Distance_To_Roadways')
+plot(x, y, xlab='Cover_Type', ylab='Horizontal_Distance_To_Roadways', main='Scatter plot of CoverType and Horizontal_Distance_To_Roadways')
+
+x <- data$Cover_Type
+y <- data$Horizontal_Distance_To_Fire_Points
+plot(x, y, xlab='Cover_Type', ylab='Horizontal_Distance_To_Fire_Points', main='Scatter plot of CoverType and Horizontal_Distance_To_Fire_Points')
 ```
 
 ```{r}
@@ -42,9 +46,21 @@ plot(x, y, ylab='Cover_Type', xlab='Horizontal_Distance_To_Roadways', main='Scat
 data = read.csv('../data/train.csv')
 selected_data = data[, c('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', 'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm', 'Horizontal_Distance_To_Fire_Points')]
 
-pca = prcomp(selected_data, center=TRUE, scale=FALSE)
+pca <- prcomp(selected_data, center=TRUE, scale=FALSE)
 summary(pca)
 pca$rotation
+
+```
+
+```{r}
+x1 <- t(t(pca$rotation[, 1]) %*% t(selected_data))
+x2 <- t(t(pca$rotation[, 2]) %*% t(selected_data))
+y <- data$Cover_Type
+
+library(plot3D)
+# plot_ly(x=x1, z=x2, y=y)
+scatter3D(x1, y, x2,
+          pch = 19, cex = 0.5)
 
 ```
 
@@ -54,4 +70,22 @@ library(ggbiplot)
 
 ggbiplot(pca)
 
+```
+
+```{r}
+data = read.csv('../data/train.csv')
+data = data[-1]
+library(Rtsne)
+data$Cover_Type = as.factor(data$Cover_Type)
+colors = rainbow(length(unique(data$Cover_Type)))
+names(colors) = unique(data$Cover_Type)
+tsne = Rtsne(data, dims = 2, perplexity=30, verbose=TRUE, max_iter = 1000)
+plot(tsne$Y, t='n', main='bidimensional mapping')
+text(tsne$Y, labels=data$Cover_Type, col=colors[data$Cover_Type])
+```
+
+```{r}
+library(corrgram)
+data = read.csv('../data/train.csv')[-1]
+corrgram(data[-11:(-length(data) + 1)], order=T, lower.panel=panel.pts, upper.panel=panel.pie, text.panel=panel.txt, main="Corrgrams")
 ```
