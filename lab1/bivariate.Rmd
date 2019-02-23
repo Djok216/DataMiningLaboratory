@@ -1,0 +1,57 @@
+```{r}
+data = read.csv('../data/train.csv')
+data = data[, c('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', 'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Hillshade_9am', 'Hillshade_Noon', 'Horizontal_Distance_To_Fire_Points')]
+correlation_matrix <- round(cor(data), 3)
+
+head(correlation_matrix)
+
+```
+
+```{r}
+library(ggcorrplot)
+ggcorrplot(correlation_matrix)
+
+```
+
+```{r}
+data = read.csv('../data/train.csv')
+
+x <- data$Elevation
+y <- data$Aspect
+
+plot(x, y, xlab='Elevation', ylab='Aspect', main='Scatter plot of Elevation and Aspect')
+abline(lm(y ~ x, data = data), col = "blue")
+
+x <- data$Elevation
+y <- data$Slope
+plot(x, y, xlab='Elevation', ylab='Slope', main='Scatter plot of Elevation and Slope')
+abline(lm(y ~ x, data = data), col = "blue")
+
+x <- data$Aspect
+y <- data$Slope
+plot(x, y, xlab='Aspect', ylab='Slope', main='Scatter plot of Elevation and Slope')
+abline(lm(y ~ x, data = data), col = "blue")
+
+x <- data$Cover_Type
+y <- data$Horizontal_Distance_To_Roadways
+plot(x, y, ylab='Cover_Type', xlab='Horizontal_Distance_To_Roadways', main='Scatter plot of CoverType and Horizontal_Distance_To_Roadways')
+```
+
+```{r}
+
+data = read.csv('../data/train.csv')
+selected_data = data[, c('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', 'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm', 'Horizontal_Distance_To_Fire_Points')]
+
+pca = prcomp(selected_data, center=TRUE, scale=FALSE)
+summary(pca)
+pca$rotation
+
+```
+
+```{r}
+
+library(ggbiplot)
+
+ggbiplot(pca)
+
+```
