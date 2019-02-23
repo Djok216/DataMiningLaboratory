@@ -1,0 +1,52 @@
+```{r}
+# train data
+data = read.csv('D:/fak/DM/DataMiningLaboratory/data/train.csv')
+data = data[, c("Elevation", "Aspect", "Slope")]
+data
+```
+
+```{r}
+# Central tendency
+summary(data)
+
+```
+```{r}
+# Variance
+print(paste("Elevation ", var(data[,1]), sep=' '))
+print(paste("Aspect", var(data[,2]), sep=' '))
+print(paste("Slope", var(data[,3]), sep=' '))
+```
+
+```{r}
+# Skewness
+library(moments)
+"Skewness"
+skewness(data)
+"Kurtosis"
+kurtosis(data)
+library(ggplot2)
+qplot(data[, 1], geom='histogram', binwidth=10) + xlab('Elevation')
+qplot(data[, 2], geom='histogram', binwidth=10) + xlab('Aspect')
+qplot(data[, 3], geom='histogram', binwidth=10) + xlab('Slope')
+qqnorm(data[, 1], xlab='Elevation')
+qqline(data[, 1], xlab='Elevation')
+qqnorm(data[, 2], xlab='Aspect')
+qqline(data[, 2], xlab='Aspect')
+qqnorm(data[, 3], xlab='Slope')
+qqline(data[, 3], xlab='Slope')
+```
+
+```{r}
+# boxplots
+boxplot(data[, 1], xlab='Elevation')
+boxplot(data[, 2], xlab='Aspect')
+boxplot(data[, 3], xlab='Slope')
+```
+
+```{r}
+# density plot
+plot(density(data[, 1]), xlab='Elevation')
+plot(density(data[, 2]), xlab='Aspect')
+plot(density(data[, 3]), xlab='Slope')
+```
+
