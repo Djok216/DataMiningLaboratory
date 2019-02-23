@@ -1,0 +1,26 @@
+```{r}
+# train data
+data = read.csv('../data/train.csv')
+data = data[-1]
+data
+```
+
+```{r}
+x = data$Cover_Type
+for (i in 1:(length(data)-1)) {
+  boxplot(data[, i] ~ x, xlab=colnames(data)[i])
+}
+```
+
+```{r}
+# independence test, Chi-squared test
+library(MASS)
+for (i in 1:(length(data) - 1)) {
+  if (sd(data[, i]) != 0) {
+    print(colnames(data)[i])
+    tbl = table(data[, i], x)
+    print(chisq.test(tbl))
+  }
+}
+```
+
