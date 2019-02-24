@@ -1,20 +1,24 @@
 ```{r}
 data = read.csv('../data/train.csv')
-data = data[, c('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', 'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Hillshade_9am', 'Hillshade_Noon', 'Horizontal_Distance_To_Fire_Points')]
-correlation_matrix <- round(cor(data), 3)
-
-head(correlation_matrix)
-
 ```
 
 ```{r}
+# plot correlation matrix of some selected features
 library(ggcorrplot)
+
+selected_data = data[, c('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', 
+                         'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 
+                         'Hillshade_9am', 'Hillshade_Noon', 'Horizontal_Distance_To_Fire_Points')
+                     ]
+
+correlation_matrix <- round(cor(selected_data), 3)
 ggcorrplot(correlation_matrix)
 
 ```
 
 ```{r}
-data = read.csv('../data/train.csv')
+
+# scatter plots
 
 x <- data$Elevation
 y <- data$Aspect
@@ -29,7 +33,7 @@ abline(lm(y ~ x, data = data), col = "blue")
 
 x <- data$Aspect
 y <- data$Slope
-plot(x, y, xlab='Aspect', ylab='Slope', main='Scatter plot of Elevation and Slope')
+plot(x, y, xlab='Aspect', ylab='Slope', main='Scatter plot of Aspect and Slope')
 abline(lm(y ~ x, data = data), col = "blue")
 
 x <- data$Cover_Type
@@ -42,34 +46,42 @@ plot(x, y, xlab='Cover_Type', ylab='Horizontal_Distance_To_Fire_Points', main='S
 ```
 
 ```{r}
+# computing PCA
+selected_data_pca = data[, c('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', 
+                             'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 
+                             'Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm', 'Horizontal_Distance_To_Fire_Points')
+                     ]
 
-data = read.csv('../data/train.csv')
-selected_data = data[, c('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', 'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm', 'Horizontal_Distance_To_Fire_Points')]
-
-pca <- prcomp(selected_data, center=TRUE, scale=FALSE)
+pca <- prcomp(selected_data_pca, center=TRUE, scale=FALSE)
 summary(pca)
 pca$rotation
 
 ```
 
 ```{r}
-x1 <- t(t(pca$rotation[, 1]) %*% t(selected_data))
-x2 <- t(t(pca$rotation[, 2]) %*% t(selected_data))
+
+# see correlation between first 2 principal components and cover type
+library(scatterplot3d)
+
+x1 <- t(t(pca$rotation[, 1]) %*% t(selected_data_pca))
+x2 <- t(t(pca$rotation[, 2]) %*% t(selected_data_pca))
 y <- data$Cover_Type
 
-library(plot3D)
-# plot_ly(x=x1, z=x2, y=y)
-scatter3D(x1, y, x2,
-          pch = 19, cex = 0.5)
+colors <- c("#FF0000", "#906C6C", "#5E3DFF", "#00EFFF", "#00FF4D", "#9AFF00", "#FFEF00")
+scatterplot3d(x=y, y=x1, z=x2, ylab="1 PC", xlab="Cover Type", zlab="2 PC", color=colors[as.numeric(y)])
 
 ```
 
 ```{r}
 
 library(ggbiplot)
-
 ggbiplot(pca)
 
+```
+```{r}
+library(pca3d)
+gr <- factor(data$Cover_Type)
+pca3d(pca, group=gr, biplot=TRUE, biplot.vars=3, legend="topleft", show.ellipses = TRUE)
 ```
 
 ```{r}
