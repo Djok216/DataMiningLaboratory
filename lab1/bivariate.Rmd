@@ -107,3 +107,13 @@ library(corrgram)
 data = read.csv('../data/train.csv')[-1]
 corrgram(data[-11:(-length(data) + 1)], order=T, lower.panel=panel.pts, upper.panel=panel.pie, text.panel=panel.txt, main="Corrgrams")
 ```
+
+```{r}
+library(MASS)
+
+data = read.csv('../data/train.csv')[-1]
+data.ppr = ppr(Cover_Type ~ Elevation + Aspect + Slope + Horizontal_Distance_To_Hydrology, data=data, nterms=4)
+#par(mfrow = c(1, 10))
+plot(data.ppr, main = "ppr(Cover_Type~)")
+plot(update(data.ppr, sm.method = "gcv", gcvpen = 2),main = "update gcv")
+```
