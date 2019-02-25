@@ -26,6 +26,12 @@ y <- data$Aspect
 plot(x, y, xlab='Elevation', ylab='Aspect', main='Scatter plot of Elevation and Aspect')
 abline(lm(y ~ x, data = data), col = "blue")
 
+x <- data$Horizontal_Distance_To_Hydrology
+y <- data$Vertical_Distance_To_Hydrology
+
+plot(x, y, xlab='Horizontal_Distance_To_Hydrology', ylab='Vertical_Distance_To_Hydrology', main='Scatter plot of Horizontal_Distance_To_Hydrology and Vertical_Distance_To_Hydrology')
+abline(lm(y ~ x, data = data), col = "blue")
+
 x <- data$Elevation
 y <- data$Slope
 plot(x, y, xlab='Elevation', ylab='Slope', main='Scatter plot of Elevation and Slope')
@@ -91,7 +97,7 @@ library(Rtsne)
 data$Cover_Type = as.factor(data$Cover_Type)
 colors = rainbow(length(unique(data$Cover_Type)))
 names(colors) = unique(data$Cover_Type)
-tsne = Rtsne(data, dims = 2, perplexity=30, verbose=TRUE, max_iter = 1000)
+tsne = Rtsne(data, dims = 2, perplexity=45, verbose=TRUE, max_iter = 1000)
 plot(tsne$Y, t='n', main='bidimensional mapping')
 text(tsne$Y, labels=data$Cover_Type, col=colors[data$Cover_Type])
 ```
