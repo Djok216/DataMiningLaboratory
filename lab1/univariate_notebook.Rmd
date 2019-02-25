@@ -1,7 +1,9 @@
 ```{r}
 # train data
 data = read.csv('../data/train.csv')
-data = data[, c("Elevation", "Aspect", "Slope")]
+data = data[, c('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', 
+                'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 
+                'Hillshade_9am', 'Hillshade_Noon', 'Horizontal_Distance_To_Fire_Points')]
 data
 ```
 
@@ -15,6 +17,8 @@ summary(data)
 print(paste("Elevation ", var(data[,1]), sep=' '))
 print(paste("Aspect", var(data[,2]), sep=' '))
 print(paste("Slope", var(data[,3]), sep=' '))
+print(paste("Horizontal_Distance_To_Hydrology", var(data[,4]), sep=' '))
+print(paste("Vertical_Distance_To_Hydrology", var(data[,5]), sep=' '))
 ```
 
 ```{r}
@@ -28,12 +32,18 @@ library(ggplot2)
 qplot(data[, 1], geom='histogram', binwidth=10) + xlab('Elevation')
 qplot(data[, 2], geom='histogram', binwidth=10) + xlab('Aspect')
 qplot(data[, 3], geom='histogram', binwidth=10) + xlab('Slope')
+qplot(data[, 4], geom='histogram', binwidth=10) + xlab('Horizontal_Distance_To_Hydrology')
+qplot(data[, 5], geom='histogram', binwidth=10) + xlab('Vertical_Distance_To_Hydrology')
 qqnorm(data[, 1], xlab='Elevation')
 qqline(data[, 1], xlab='Elevation')
 qqnorm(data[, 2], xlab='Aspect')
 qqline(data[, 2], xlab='Aspect')
 qqnorm(data[, 3], xlab='Slope')
 qqline(data[, 3], xlab='Slope')
+qqnorm(data[, 4], xlab='Horizontal_Distance_To_Hydrology')
+qqline(data[, 4], xlab='Horizontal_Distance_To_Hydrology')
+qqnorm(data[, 5], xlab='Vertical_Distance_To_Hydrology')
+qqline(data[, 5], xlab='Vertical_Distance_To_Hydrology')
 ```
 
 ```{r}
@@ -41,6 +51,8 @@ qqline(data[, 3], xlab='Slope')
 boxplot(data[, 1], xlab='Elevation')
 boxplot(data[, 2], xlab='Aspect')
 boxplot(data[, 3], xlab='Slope')
+boxplot(data[, 4], xlab='Horizontal_Distance_To_Hydrology')
+boxplot(data[, 5], xlab='Vertical_Distance_To_Hydrology')
 ```
 
 ```{r}
@@ -48,16 +60,30 @@ boxplot(data[, 3], xlab='Slope')
 plot(density(data[, 1]), xlab='Elevation')
 plot(density(data[, 2]), xlab='Aspect')
 plot(density(data[, 3]), xlab='Slope')
+plot(density(data[, 4]), xlab='Horizontal_Distance_To_Hydrology')
+plot(density(data[, 5]), xlab='Vertical_Distance_To_Hydrology')
 ```
 
 ```{r}
 # freq for categorial atributes
 data = read.csv('../data/train.csv')
-data = data[, c('Wilderness_Area1', 'Wilderness_Area2', 'Wilderness_Area3', 'Wilderness_Area4', 'Cover_Type')]
+data = data[, c('Wilderness_Area1', 'Wilderness_Area2', 'Wilderness_Area3', 'Wilderness_Area4', 'Cover_Type', 'Soil_Type25', 'Soil_Type25', 'Soil_Type25', 'Soil_Type37')]
 qplot(as.factor(data[, 1]), xlab='Wilderness_Area1')
 qplot(as.factor(data[, 2]), xlab='Wilderness_Area2')
 qplot(as.factor(data[, 3]), xlab='Wilderness_Area3')
 qplot(as.factor(data[, 4]), xlab='Wilderness_Area4')
 qplot(as.factor(data[, 5]), xlab='Cover Type')
+qplot(as.factor(data[, 6]), xlab='Soil Type 24')
+print('Soil Type 24')
+table(data[, 6])
+qplot(as.factor(data[, 7]), xlab='Soil Type 25')
+print('Soil Type 25')
+table(data[, 7])
+qplot(as.factor(data[, 8]), xlab='Soil Type 26')
+print('Soil Type 26')
+table(data[, 8])
+qplot(as.factor(data[, 9]), xlab='Soil Type 37')
+print('Soil Type 37')
+table(data[, 9])
 ```
 
