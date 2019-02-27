@@ -84,11 +84,6 @@ library(ggbiplot)
 ggbiplot(pca)
 
 ```
-```{r}
-library(pca3d)
-gr <- factor(data$Cover_Type)
-pca3d(pca, group=gr, biplot=TRUE, biplot.vars=3, legend="topleft", show.ellipses = TRUE)
-```
 
 ```{r}
 data = read.csv('../data/train.csv')

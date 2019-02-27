@@ -2,7 +2,6 @@
 # train data
 data = read.csv('../data/train.csv')
 data = data[-1]
-data
 ```
 
 ```{r}
