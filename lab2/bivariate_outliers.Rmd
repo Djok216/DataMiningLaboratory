@@ -1,0 +1,36 @@
+```{r}
+# train data
+data = read.csv('../data/train.csv')
+data = data[-1]
+```
+
+```{r}
+# Mahalanobis distance 2D
+for (i in 1:9) {
+  name1 = colnames(data)[i]
+  for (j in (i+1):10) {
+    name2 = colnames(data)[j]
+    hw = data.frame(name1=data[, i], name2=data[, j])
+    ord = order(mahalanobis(hw, colMeans(hw), cov(hw)), decreasing=T)
+    outlier = rep(F, nrow(hw))
+    outlier[ord[1:100]] = T
+    pch = outlier * 16
+    plot(hw, pch=pch, xlab=name1, ylab=name2)
+  }
+}
+```
+```{r}
+# Mahalanobis distance 3D
+library(rgl)
+name1 = colnames(data)[1]
+name2 = colnames(data)[2]
+name3 = colnames(data)[3]
+hw = data.frame(name1=data[, 1], name2=data[, 2], name3=data[, 3])
+ord = order(mahalanobis(hw, colMeans(hw), cov(hw)), decreasing=T)
+outlier = rep(F, nrow(hw))
+outlier[ord[1:100]] = T
+col = outlier + 1
+plot3d(hw$name1, hw$name2, hw$name3, type='s', col=col, xlab=name1, ylab=name2, zlab=name3)
+
+```
+
