@@ -82,12 +82,12 @@ ggplot(anomaly, aes(x = as.numeric(rowname), y = Reconstruction.MSE, color = as.
 ```{r}
 # LOF
 library(dbscan)
-for (i in 1:4) {
+for (i in 1:9) {
   name1 = colnames(data)[i]
-  for (j in (i+1):5) {
+  for (j in (i+1):10) {
     name2 = colnames(data)[j]
     lof_data = data.frame(name1 = data[, i], name2 = data[, j])
-    loff = lof(lof_data, k = 3)
+    loff = lof(lof_data, k = 5)
     plot(lof_data, pch = ".", main = "LOF (k=3)", xlab=name1, ylab=name2)
     points(lof_data, cex = (loff-1)*3, pch = 1, col="red")
     text(lof_data[loff>2,], labels = round(loff, 1)[loff>2], pos = 3)
@@ -95,4 +95,16 @@ for (i in 1:4) {
 }
 ```
 
+
+```{r}
+# Projection method, Stahel-Donoho, mrfDepth
+library(mrfDepth)
+data = read.csv('../data/train.csv')
+data = data[-1]
+result = outlyingness(x = data)
+outliers = which(!result$flagX)
+
+plot(data)
+points(data[outliers,], col = "red")
+```
 
