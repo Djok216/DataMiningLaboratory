@@ -1,0 +1,28 @@
+```{r}
+# train data
+data = read.csv('../data/train.csv')
+data = data[-1]
+```
+
+```{r}
+# 1.5IQR rule
+for (i in 1:10) {
+  outlier_values <- boxplot.stats(data[, i])$out
+  boxplot(data[, i], main=colnames(data)[i], boxwex=0.1)
+  mtext(paste("#Outliers: ", paste(length(outlier_values))), side=1)
+  mtext(paste("#Total: ", paste(length(data[, i]))), side=1, line=1)
+}
+```
+
+```{r}
+# mean +- 3 * sd
+for (i in 1:10) {
+  currData = data[, i]
+  currMean = mean(currData)
+  currSd = 3 * sd(currData)
+  name = colnames(data)[i]
+  currData = abs(currData - currMean)
+  print(paste(name, paste(": ", paste(length(currData[currData > currSd])))))
+}
+```
+
