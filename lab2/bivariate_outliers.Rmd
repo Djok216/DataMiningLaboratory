@@ -34,3 +34,48 @@ plot3d(hw$name1, hw$name2, hw$name3, type='s', col=col, xlab=name1, ylab=name2, 
 
 ```
 
+```{r}
+# autoencoders, init h2o and train/save model
+library(h2o)
+h2o.init(nthreads = -1)
+data_hf = as.h2o(data)
+features = setdiff(colnames(data_hf), "Cover_Type")
+model_nn = h2o.deeplearning(x = features, 
+                            training_frame = data_hf, 
+                            model_id = 'autoencoder',
+                            autoencoder = T,
+                            ignore_const_cols = F,
+                            seed = 57,
+                            hidden = c(25, 10, 25),
+                            epochs = 100,
+                            activation = 'Tanh')
+h2o.saveModel(model_nn, path='autoencoder', force = T)
+model_nn
+```
+
+```{r}
+# load Autoencoder model and identify outliers
+library(h2o)
+library(dplyr)
+library(ggplot2)
+h2o.init(nthreads = -1)
+data_hf = as.h2o(data)
+model_nn = h2o.loadModel("autoencoder/autoencoder")
+anomaly = h2o.anomaly(model_nn, data_hf) %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column() %>%
+  mutate(Cover_Type = as.vector(data$Cover_Type))
+
+mean_mse = anomaly %>%
+  group_by(Cover_Type) %>%
+  summarise(mean = mean(Reconstruction.MSE))
+
+ggplot(anomaly, aes(x = as.numeric(rowname), y = Reconstruction.MSE, color = as.factor(Cover_Type))) +
+  geom_point(alpha = 0.3) +
+  geom_hline(data = mean_mse, aes(yintercept = mean, color = as.factor(Cover_Type))) +
+  scale_color_brewer(palette = "Set1") +
+  labs(x = "instance number",
+       color = "Cover_Type")
+
+```
+
