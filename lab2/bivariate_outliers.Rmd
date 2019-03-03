@@ -117,4 +117,21 @@ for (i in 1:9) {
 }
 ```
 
+```{r}
+
+library(mrfDepth)
+data = read.csv('../data/train.csv')
+# data = data[-1]
+selected_data = data[, c('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', 
+                         'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 
+                         'Hillshade_9am', 'Hillshade_Noon', 'Horizontal_Distance_To_Fire_Points')
+                     ]
+
+result = outlyingness(x = selected_data)
+outliers = which(!result$flagX)
+plot(selected_data)
+head(selected_data$outliers)
+points(selected_data[outliers,], col = "red")
+```
+
 
