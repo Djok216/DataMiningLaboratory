@@ -97,14 +97,24 @@ for (i in 1:9) {
 
 
 ```{r}
-# Projection method, Stahel-Donoho, mrfDepth
-library(mrfDepth)
+# Isolation Forest
+# library(devtools)
+# install_github("Zelazny7/isofor")
+library(isofor)
 data = read.csv('../data/train.csv')
 data = data[-1]
-result = outlyingness(x = data)
-outliers = which(!result$flagX)
 
-plot(data)
-points(data[outliers,], col = "red")
+for (i in 1:9) {
+  name1 = colnames(data)[i]
+  for (j in (i+1):10) {
+    name2 = colnames(data)[j]
+    hw = data.frame(name1=data[, i], name2=data[, j])
+    mod = iForest(X = hw, 200, 32)
+    p = predict(mod, hw)
+    col = ifelse(p > quantile(p, 0.95), "red", "blue")
+    plot(hw, col=col, xlab=name1, ylab=name2)
+  }
+}
 ```
+
 
