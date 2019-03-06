@@ -36,21 +36,21 @@ plot3d(hw$name1, hw$name2, hw$name3, type='s', col=col, xlab=name1, ylab=name2, 
 
 ```{r}
 # autoencoders, init h2o and train/save model
-library(h2o)
-h2o.init(nthreads = -1)
-data_hf = as.h2o(data)
-features = setdiff(colnames(data_hf), "Cover_Type")
-model_nn = h2o.deeplearning(x = features, 
-                            training_frame = data_hf, 
-                            model_id = 'autoencoder',
-                            autoencoder = T,
-                            ignore_const_cols = F,
-                            seed = 57,
-                            hidden = c(25, 10, 25),
-                            epochs = 100,
-                            activation = 'Tanh')
-h2o.saveModel(model_nn, path='autoencoder', force = T)
-model_nn
+#library(h2o)
+#h2o.init(nthreads = -1)
+#data_hf = as.h2o(data)
+#features = setdiff(colnames(data_hf), "Cover_Type")
+#model_nn = h2o.deeplearning(x = features, 
+#                            training_frame = data_hf, 
+#                            model_id = 'autoencoder',
+#                            autoencoder = T,
+#                            ignore_const_cols = F,
+#                            seed = 57,
+#                            hidden = c(25, 10, 25),
+#                            epochs = 100,
+#                            activation = 'Tanh')
+#h2o.saveModel(model_nn, path='autoencoder', force = T)
+#model_nn
 ```
 
 ```{r}
