@@ -1,0 +1,52 @@
+```{r}
+library(R.matlab)
+data <- readMat("C:\\Users\\brusu\\Downloads\\cover.mat")
+
+```
+
+```{r}
+# univariate outliers
+
+
+
+total_outliers = length(data$y[data$y == 1])
+
+for (i in 1:10) {
+  
+  iqr = IQR(data$X[, i])
+  qs = quantile(data$X[, i])
+  
+  currData = data$X[, i]
+  currMean = mean(currData)
+  currSd = 3 * sd(currData)
+  
+  fp_iqr <- 0
+  tp_iqr <- 0
+  
+  fp_sd <- 0
+  tp_sd <- 0
+
+  for (j in 1:length(data$y)){
+    if ((data$X[j, i] < (qs[2] - 1.5 * iqr)) || (data$X[j, i] > (qs[4] + 1.5 * iqr))){
+      if (data$y[j] == 1){
+        tp_iqr <- tp_iqr + 1;
+      }else{
+        fp_iqr <- fp_iqr + 1;
+      }
+    }
+    if(abs(data$X[j, i] - currMean) > currSd){
+      if (data$y[j] == 1){
+        tp_sd <- tp_sd + 1;
+      }else{
+        fp_sd <- fp_sd + 1;
+      }
+    }
+  }
+  
+  cat("[IQR rule] true positive =", tp_iqr, "\t", "false positive =", fp_iqr, "\n")
+  cat("[IQR rule] precision =", tp_iqr / (tp_iqr + fp_iqr), "\t", "recall =", tp_iqr / total_outliers, "\n\n")
+  cat("[k*sd rule] true positive =", tp_sd, "\t", "false positive =", fp_sd, "\n")
+  cat("[k*sd rule] precision =", tp_sd / (tp_sd + fp_sd), "\t", "recall =", tp_sd / total_outliers, "\n\n")
+}
+
+```
