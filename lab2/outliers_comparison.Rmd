@@ -1,6 +1,6 @@
 ```{r}
-library(R.matlab)
-data <- readMat("C:\\Users\\brusu\\Downloads\\cover.mat")
+library(rmatio)
+data = read.mat('./outliers/cover.mat')
 
 ```
 
@@ -12,7 +12,6 @@ data <- readMat("C:\\Users\\brusu\\Downloads\\cover.mat")
 total_outliers = length(data$y[data$y == 1])
 
 for (i in 1:10) {
-  
   iqr = IQR(data$X[, i])
   qs = quantile(data$X[, i])
   
