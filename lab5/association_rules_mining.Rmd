@@ -1,0 +1,22 @@
+```{r}
+data = read.csv('../data/train.csv')
+data = data[-1]
+```
+
+```{r}
+library(arules)
+
+selected_data = data[, c('Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm')]
+
+features_rules <- apriori(selected_data, parameter = list(support = 0.01, confidence = 0.5))
+inspect(head(sort(features_rules, by="confidence"), 20))
+```
+
+```{r}
+
+selected_data = data[, c('Horizontal_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Horizontal_Distance_To_Fire_Points')]
+
+features_rules <- apriori(selected_data, parameter = list(support = 0.01, confidence = 0.5))
+inspect(head(sort(features_rules, by="confidence"), 9))
+
+```
