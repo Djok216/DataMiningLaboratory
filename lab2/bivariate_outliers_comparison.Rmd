@@ -1,0 +1,84 @@
+```{r}
+library(rmatio)
+data = read.mat('./outliers/cover.mat')
+outliers = data$y
+data = data$X
+```
+
+```{r}
+# Mahalanobis
+sum = 0
+total = 0.0
+for (i in 1:1) {
+  for (j in (i+1):2) {
+    hw = data.frame(name1=data[, i], name2=data[, j])
+    ord = order(mahalanobis(hw, colMeans(hw), cov(hw)), decreasing=T)
+    outlier = rep(F, nrow(hw))
+    outlier[ord[1:1747]] = T
+    precision = 0
+    for (k in 1:length(outliers)) {
+      if (outliers[k] && outlier[k]) {
+        precision = precision + 1
+      }
+    }
+    sum = sum + precision / 1747.0
+    total = total + 1.0
+  }
+}
+
+sum / total
+```
+```{r}
+# Isolation Forest
+# library(devtools)
+# install_github("Zelazny7/isofor")
+library(isofor)
+total = 0.0
+precisionSum = 0.0
+recallSum = 0.0
+for (i in 1:1) {
+  name1 = colnames(data)[i]
+  for (j in (i+1):2) {
+    name2 = colnames(data)[j]
+    hw = data.frame(name1=data[, i], name2=data[, j])
+    mod = iForest(X = hw, 200, 32)
+    p = predict(mod, hw)
+    col = ifelse(p > quantile(p, 0.95), T, F)
+    precision = 0
+    cnt = 0.0
+    for (k in 1:length(outliers)) {
+      if (outliers[k] && col[k]) {
+        precision = precision + 1
+      }
+      if (col[k]) {
+        cnt = cnt + 1.0
+      }
+    }
+    precisionSum = precisionSum + precision / cnt
+    recallSum = recallSum + precision / 1747.0
+    total = total + 1.0
+  }
+}
+
+precisionSum / total
+recallSum / total
+```
+```{r}
+library(mrfDepth)
+library(ggplot2)
+selected_data = data
+
+result = outlyingness(x = selected_data)
+ord = which(!result$flagX)
+outlier = rep(F, length(outliers))
+outlier[ord[1:1747]] = T
+precision = 0
+for (k in 1:length(outliers)) {
+  if (outliers[k] && outlier[k]) {
+    precision = precision + 1
+  }
+}
+precision / 1747.0
+```
+
+
