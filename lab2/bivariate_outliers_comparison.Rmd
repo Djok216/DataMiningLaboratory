@@ -3,30 +3,35 @@ library(rmatio)
 data = read.mat('./outliers/cover.mat')
 outliers = data$y
 data = data$X
+total_outliers = length(outliers[outliers == 1])
 ```
 
 ```{r}
 # Mahalanobis
-sum = 0
-total = 0.0
-for (i in 1:1) {
-  for (j in (i+1):2) {
+# sum = 0
+# total = 0.0
+for (i in 1:ncol(data) - 1) {
+  for (j in (i+1):ncol(data)) {
     hw = data.frame(name1=data[, i], name2=data[, j])
     ord = order(mahalanobis(hw, colMeans(hw), cov(hw)), decreasing=T)
     outlier = rep(F, nrow(hw))
     outlier[ord[1:1747]] = T
     precision = 0
+    fp = 0
     for (k in 1:length(outliers)) {
       if (outliers[k] && outlier[k]) {
         precision = precision + 1
+      }else if (outlier[k]){
+        fp = fp + 1
       }
     }
-    sum = sum + precision / 1747.0
-    total = total + 1.0
+    cat("[Mahalanobis] features", i, j, "\tprecision =", precision / (precision + fp), "\t", "recall =", precision / total_outliers, "\n")
+    # sum = sum + precision / 1747.0
+    # total = total + 1.0
   }
 }
 
-sum / total
+# sum / total
 ```
 ```{r}
 # Isolation Forest
@@ -38,7 +43,7 @@ precisionSum = 0.0
 recallSum = 0.0
 for (i in 1:1) {
   name1 = colnames(data)[i]
-  for (j in (i+1):2) {
+  for (j in (i+1):ncol(data)) {
     name2 = colnames(data)[j]
     hw = data.frame(name1=data[, i], name2=data[, j])
     mod = iForest(X = hw, 200, 32)
@@ -54,14 +59,15 @@ for (i in 1:1) {
         cnt = cnt + 1.0
       }
     }
+    cat("[Isolation forest] features", i, j, "\tprecision =", precision / cnt, "\t", "recall =", precision / total_outliers, "\n")
     precisionSum = precisionSum + precision / cnt
     recallSum = recallSum + precision / 1747.0
     total = total + 1.0
   }
 }
 
-precisionSum / total
-recallSum / total
+# precisionSum / total
+# recallSum / total
 ```
 ```{r}
 library(mrfDepth)
