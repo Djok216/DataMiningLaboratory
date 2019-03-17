@@ -1,22 +1,52 @@
 ```{r}
+library(arules)
+library(arulesViz)
+
 data = read.csv('../data/train.csv')
 data = data[-1]
 ```
 
 ```{r}
-library(arules)
-
 selected_data = data[, c('Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm')]
 
-features_rules <- apriori(selected_data, parameter = list(support = 0.01, confidence = 0.5))
-inspect(head(sort(features_rules, by="confidence"), 20))
+features_rules <- apriori(selected_data, parameter = list(support = 0.15, confidence = 0.6))
+inspect(head(sort(features_rules, by="confidence"), 9))
+plot(features_rules)
+plot(features_rules, method="graph")
+plot(features_rules, method="paracoord")
+plot(features_rules, method="matrix3D")
+plot(features_rules[1, ], method="doubledecker", data=data)
+inspect(sort(eclat(selected_data, parameter = list(supp = 0.07, maxlen = 15)), by="count"))
+```
+
+```{r}
+selected_data = data[, c('Horizontal_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Horizontal_Distance_To_Fire_Points')]
+
+features_rules <- apriori(selected_data, parameter = list(support = 0.1, confidence = 0.6))
+inspect(head(sort(features_rules, by="confidence"), 9))
+
 ```
 
 ```{r}
 
-selected_data = data[, c('Horizontal_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Horizontal_Distance_To_Fire_Points')]
+selected_data = data[, c('Aspect', 'Cover_Type')]
+features_rules <- apriori(selected_data, parameter = list(support = 0.01, confidence = 0.4))
+inspect(sort(features_rules, by="support"))
 
-features_rules <- apriori(selected_data, parameter = list(support = 0.01, confidence = 0.5))
-inspect(head(sort(features_rules, by="confidence"), 9))
+```
+
+```{r}
+
+selected_data = data[11:ncol(data)]  # all binary features + label (cover type)
+print(colnames(selected_data)[-ncol(selected_data)])
+for(c in colnames(selected_data)[-ncol(selected_data)]) selected_data[[c]] <- as.logical(selected_data[[c]])
+
+features_rules <- apriori(selected_data, parameter = list(support = 0.02, confidence = 0.5))
+inspect(sort(features_rules, by="support"))
+plot(features_rules)
+plot(features_rules, method="graph")
+plot(features_rules, method="paracoord")
+plot(features_rules, method="matrix3D")
+plot(features_rules[1, ], method="doubledecker", data=data)
 
 ```
