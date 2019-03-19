@@ -79,11 +79,16 @@ ord = which(!result$flagX)
 outlier = rep(F, length(outliers))
 outlier[ord[1:1747]] = T
 precision = 0
+fp = 0
 for (k in 1:length(outliers)) {
   if (outliers[k] && outlier[k]) {
     precision = precision + 1
   }
+  else if(outlier[k]){
+    fp = fp + 1;
+  }
 }
+cat("[Projections] precision =", precision / (precision + fp), "\trecall =", precision / total_outliers, "\n")
 precision / 1747.0
 ```
 
