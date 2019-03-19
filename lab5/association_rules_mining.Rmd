@@ -20,11 +20,18 @@ inspect(sort(eclat(selected_data, parameter = list(supp = 0.07, maxlen = 15)), b
 ```
 
 ```{r}
-selected_data = data[, c('Horizontal_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Horizontal_Distance_To_Fire_Points')]
+selected_data = data[, c('Horizontal_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Horizontal_Distance_To_Fire_Points', 'Cover_Type')]
 
-features_rules <- apriori(selected_data, parameter = list(support = 0.1, confidence = 0.6))
-inspect(head(sort(features_rules, by="confidence"), 9))
+features_rules <- apriori(selected_data, parameter = list(support = 0.1, confidence = 0.5))
+inspect(sort(features_rules, by="confidence"))
 
+```
+
+```{r}
+selected_data = data[, c('Elevation', 'Aspect', 'Cover_Type')]
+
+features_rules <- apriori(selected_data, parameter = list(support = 0.1, confidence = 0.5))
+inspect(sort(features_rules, by="confidence"))
 ```
 
 ```{r}
