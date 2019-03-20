@@ -7,49 +7,50 @@ data = data[-1]
 ```
 
 ```{r}
-selected_data = data[, c('Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm')]
+selected_data = data[, c('Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm', 'Cover_Type')]
 
-features_rules <- apriori(selected_data, parameter = list(support = 0.15, confidence = 0.6))
+features_rules <- apriori(selected_data, parameter = list(support = 0.03, confidence = 0.2))
 inspect(head(sort(features_rules, by="confidence"), 9))
 plot(features_rules)
 plot(features_rules, method="graph")
 plot(features_rules, method="paracoord")
 plot(features_rules, method="matrix3D")
-plot(features_rules[1, ], method="doubledecker", data=data)
 inspect(sort(eclat(selected_data, parameter = list(supp = 0.07, maxlen = 15)), by="count"))
 ```
 
 ```{r}
 selected_data = data[, c('Horizontal_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', 'Horizontal_Distance_To_Fire_Points', 'Cover_Type')]
 
-features_rules <- apriori(selected_data, parameter = list(support = 0.1, confidence = 0.5))
+features_rules <- apriori(selected_data, parameter = list(support = 0.03, confidence = 0.5))
 inspect(sort(features_rules, by="confidence"))
 
 ```
 
 ```{r}
-selected_data = data[, c('Elevation', 'Aspect', 'Cover_Type')]
 
-features_rules <- apriori(selected_data, parameter = list(support = 0.1, confidence = 0.5))
+selected_data = data[, c('Elevation', 'Aspect', 'Cover_Type')]
+print(min(selected_data$Elevation))
+print(max(selected_data$Elevation))
+features_rules <- apriori(selected_data, parameter = list(support = 0.03, confidence = 0.5))
 inspect(sort(features_rules, by="confidence"))
 ```
 
 ```{r}
 
 selected_data = data[, c('Aspect', 'Cover_Type')]
-features_rules <- apriori(selected_data, parameter = list(support = 0.01, confidence = 0.4))
-inspect(sort(features_rules, by="support"))
+features_rules <- apriori(selected_data, parameter = list(support = 0.1, confidence = 0.4))
+inspect(sort(features_rules, by="confidence"))
 
 ```
 
 ```{r}
 
 selected_data = data[11:ncol(data)]  # all binary features + label (cover type)
-print(colnames(selected_data)[-ncol(selected_data)])
+# print(colnames(selected_data)[-ncol(selected_data)])
 for(c in colnames(selected_data)[-ncol(selected_data)]) selected_data[[c]] <- as.logical(selected_data[[c]])
 
 features_rules <- apriori(selected_data, parameter = list(support = 0.02, confidence = 0.5))
-inspect(sort(features_rules, by="support"))
+inspect(sort(features_rules, by="confidence"))
 plot(features_rules)
 plot(features_rules, method="graph")
 plot(features_rules, method="paracoord")
