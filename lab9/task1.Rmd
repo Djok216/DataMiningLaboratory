@@ -1,21 +1,41 @@
 ```{r}
 
 data = read.csv('../data/train.csv')
-data = data[-1]
 
 ```
 
 ```{r}
 # k folding
-k <- 6  # 1 partition for test and rest for train
+k <- 6  # one partition for test and rest for train
 
 folds <- sample(rep(1:k, length.out = nrow(data)))
 
-getpartition <- function(ith){
+split_data <- function(ith){
   if (ith > k || ith <= 0)
     stop("Inexistent partition")
   
   pelem <- which(folds == ith)
   return (list("test" = data[pelem, ], "train" = data[-pelem, ]))
 }
+```
+
+```{r}
+# decision tree classifier
+library(rpart)
+library(caret)
+# library(rpart.plot)
+partition <- split_data(1)
+test = partition$test
+train = partition$train
+tr <- rpart(formula=Cover_Type ~ ., data=train, method="class")
+rpart.plot(tr, box.palette = 0)
+cm <- table(test$Cover_Type, rpart.predict(tr, test, type="class"))
+s <- 0
+for (i in 1:nrow(cm)){
+  for (j in (i + 1):ncol(cm)){
+    s <- s + cm[i, j];
+  }
+}
+nrow(test)
+
 ```
