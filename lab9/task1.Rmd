@@ -23,19 +23,16 @@ split_data <- function(ith){
 # decision tree classifier
 library(rpart)
 library(caret)
-# library(rpart.plot)
-partition <- split_data(1)
+
+partition <- split_data(4)
 test = partition$test
 train = partition$train
 tr <- rpart(formula=Cover_Type ~ ., data=train, method="class")
 rpart.plot(tr, box.palette = 0)
+printcp(tr)
 cm <- table(test$Cover_Type, rpart.predict(tr, test, type="class"))
-s <- 0
-for (i in 1:nrow(cm)){
-  for (j in (i + 1):ncol(cm)){
-    s <- s + cm[i, j];
-  }
-}
-nrow(test)
-
+rownames(cm) <- paste("Actual", rownames(cm), sep = ":")
+colnames(cm) <- paste("Pred", colnames(cm), sep = ":")
+cm
+sum(diag(cm)) / nrow(test)
 ```
