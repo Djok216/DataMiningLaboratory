@@ -1,3 +1,11 @@
 .Rhistory
 *.zip 
 .vscode/
+
+Include/
+Lib/
+Scripts/
+tcl/
+share/
+etc/
+.ipynb_checkpoints/
