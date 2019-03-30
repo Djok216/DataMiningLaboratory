@@ -1,6 +1,7 @@
 ```{r}
 
 data = read.csv('../data/train.csv')
+data = data[-1]
 
 ```
 
@@ -35,4 +36,29 @@ rownames(cm) <- paste("Actual", rownames(cm), sep = ":")
 colnames(cm) <- paste("Pred", colnames(cm), sep = ":")
 cm
 sum(diag(cm)) / nrow(test)
+```
+
+```{r}
+library(caret)
+library(rpart.plot)
+
+intrain <- createDataPartition(y = data$Cover_Type, p= 0.7, list = FALSE)
+training <- data[intrain,]
+testing <- data[-intrain,]
+dim(training); dim(testing);
+
+decisinStump(X=training$Elevation, Y=training$Id)
+# trctrl <- trainControl(method = "repeatedcv", number = 5, repeats = 3)
+# dtree_fit <- train(Cover_Type ~., data = training, method = "gbm",
+#                    parms = list(split = "information"),
+#                    trControl=trctrl,
+#                    tuneLength = 10)
+# test_pred <- predict(dtree_fit, newdata = testing, type="prob")
+# print("\n")
+# str(test_pred)
+# str(as.vector(testing$Cover_Type))
+# 
+# 
+# confusionMatrix(as.vector(testing$Cover_Type), as.vector(testing$Cover_Type))
+names(getModelInfo())
 ```
