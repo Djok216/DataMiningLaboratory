@@ -9,3 +9,5 @@ tcl/
 share/
 etc/
 .ipynb_checkpoints/
+*.gv
+*.gv.pdf
