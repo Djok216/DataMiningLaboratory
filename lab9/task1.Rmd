@@ -119,31 +119,40 @@ library(xgboost)
 data = read.csv('../data/train_withoutheader.csv')
 data = data[-1]
 
-partition = split_data(4)
-test.x = partition$test[, 1:(length(partition$test)-1)]
-test.y = partition$test[, length(partition$test)] - 1
-to_train.x = partition$train[, 1:(length(partition$train)-1)]
-to_train.y = partition$train[, length(partition$train)] - 1
-
-xgb.grid = expand.grid(
-        nrounds=100,
-        max_depth=c(5,10,15),
-        eta=c(0.3,0.025,0.0025),
-        gamma=c(0.501,1.0),
-        colsample_bytree=1,
-        min_child_weight=1
-        )
-
-xgb.opt.mod = xgboost(data=xgb.DMatrix(model.matrix(~.,data=to_train.x),label=to_train.y),
-                         num_class=7,
-                         nrounds=200,
-                         params=list(objective="multi:softmax",eval_metric="merror",allowParallel=T),
-                         tuneGrid=xgb.grid,
-                         method='xgbTree'
-                      )
-
-saveRDS(xgb.opt.mod,"xgb.opt.mod")
-xgb.opt.pred = predict(xgb.opt.mod,newdata=xgb.DMatrix(model.matrix(~.,data=test.x),label=test.y))
-confusionMatrix(factor(xgb.opt.pred, levels=0:6),factor(test.y, levels=0:6))
+fileName = 'xgboost_results.txt'
+fileObj = file(fileName)
+write('', file=fileObj, append=F)
+close(fileObj)
+for (i in 1:1) {
+  partition = split_data(i)
+  test.x = partition$test[, 1:(length(partition$test)-1)]
+  test.y = partition$test[, length(partition$test)] - 1
+  to_train.x = partition$train[, 1:(length(partition$train)-1)]
+  to_train.y = partition$train[, length(partition$train)] - 1
+  
+  xgb.grid = expand.grid(
+          nrounds=100,
+          max_depth=c(5,10,15),
+          eta=c(0.3,0.025,0.0025),
+          gamma=c(0.501,1.0),
+          colsample_bytree=1,
+          min_child_weight=1
+          )
+  
+  xgb.opt.mod = xgboost(data=xgb.DMatrix(model.matrix(~.,data=to_train.x),label=to_train.y),
+                           num_class=7,
+                           nrounds=2,
+                           params=list(objective="multi:softmax",eval_metric="merror",allowParallel=T),
+                           tuneGrid=xgb.grid,
+                           method='xgbTree'
+                        )
+  
+  saveRDS(xgb.opt.mod,"xgb.opt.mod")
+  xgb.opt.pred = predict(xgb.opt.mod,newdata=xgb.DMatrix(model.matrix(~.,data=test.x),label=test.y))
+  confusionMatrix(factor(xgb.opt.pred, levels=0:6),factor(test.y, levels=0:6))
+  fileName = 'xgboost_results.txt'
+  writeLines(toString(factor(test.y, levels=0:6)), fileName)
+  #writeLines(toString(factor(xgb.opt.pred, levels=0:6)), fileName)
+}
 ```
 
