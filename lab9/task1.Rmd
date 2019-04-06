@@ -62,3 +62,54 @@ decisinStump(X=training$Elevation, Y=training$Id)
 # confusionMatrix(as.vector(testing$Cover_Type), as.vector(testing$Cover_Type))
 names(getModelInfo())
 ```
+
+```{r}
+#install.packages("drat", repos = "https://cran.rstudio.com")
+#drat::addRepo("dmlc")
+#cran <- getOption("repos")
+#cran["dmlc"] <- "https://s3-us-west-2.amazonaws.com/apache-mxnet/R/CRAN/"
+#options(repos = cran)
+#install.packages("mxnet",dependencies = T)
+library(mxnet)
+data = read.csv('../data/train_withoutheader.csv')
+data = data[-1]
+
+partition = split_data(4)
+test.x = t(partition$test[, 1:(length(partition$test)-1)])
+test.y = partition$test[, length(partition$test)] - 1
+train.x = t(partition$train[, 1:(length(partition$train)-1)])
+train.y = partition$train[, length(partition$train)] - 1
+
+m1.data = mx.symbol.Variable("data")
+
+m1.fc1 = mx.symbol.FullyConnected(m1.data, name="fc1", num_hidden=256)
+m1.act1 = mx.symbol.Activation(m1.fc1, name="act", act_type="softrelu")
+
+m1.fc2 = mx.symbol.FullyConnected(m1.act1, name="fc2", num_hidden=128)
+m1.act2 = mx.symbol.Activation(m1.fc2, name="act", act_type="softrelu")
+
+m1.fc3 = mx.symbol.FullyConnected(m1.act2, name="fc3", num_hidden=64)
+m1.act3 = mx.symbol.Activation(m1.fc3, name="act", act_type="softrelu")
+
+m1.fc4 = mx.symbol.FullyConnected(m1.act3, name="fc4", num_hidden=32)
+m1.act4 = mx.symbol.Activation(m1.fc4, name="act4", act_type="softrelu")
+
+m1.fc5 = mx.symbol.FullyConnected(m1.act4, name="fc5", num_hidden=16)
+m1.softmax = mx.symbol.SoftmaxOutput(m1.fc5, name="softmax")
+
+ick <- proc.time()
+mx.set.seed(0)
+m1 = mx.model.FeedForward.create(m1.softmax,
+                                     X = train.x,
+                                     y = train.y,
+                                     num.round = 100,
+                                     array.batch.size = 256,
+                                     array.layout="colmajor",
+                                     optimizer='adam',
+                                     eval.metric = mx.metric.accuracy,
+                                     initializer = mx.init.uniform(0.07)
+)
+m1.preds = predict(m1, test.x, array.layout = "colmajor")
+
+```
+
