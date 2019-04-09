@@ -117,8 +117,6 @@ m1.preds = predict(m1, test.x, array.layout = "colmajor")
 library(caret)
 library(xgboost)
 library(bazar)
-data = read.csv('../data/train_withoutheader.csv')
-data = data[-1]
 
 ans = NA
 for (i in 1:5) {
@@ -127,10 +125,6 @@ for (i in 1:5) {
   test.y = partition$test[, length(partition$test)] - 1
   to_train.x = partition$train[, 1:(length(partition$train)-1)]
   to_train.y = partition$train[, length(partition$train)] - 1
-  print(length(test.y))
-  print(length(test.x[[1]]))
-  print(length(to_train.y))
-  print(length(to_train.x[[1]]))
   xgb.grid = expand.grid(
           nrounds=100,
           max_depth=c(5,10,15),
@@ -142,7 +136,7 @@ for (i in 1:5) {
   
   xgb.opt.mod = xgboost(data=xgb.DMatrix(model.matrix(~.,data=to_train.x),label=to_train.y),
                            num_class=7,
-                           nrounds=1,
+                           nrounds=200,
                            params=list(objective="multi:softmax",eval_metric="merror",allowParallel=T),
                            tuneGrid=xgb.grid,
                            method='xgbTree'
@@ -150,12 +144,35 @@ for (i in 1:5) {
   
   saveRDS(xgb.opt.mod,"xgb.opt.mod")
   xgb.opt.pred = predict(xgb.opt.mod,newdata=xgb.DMatrix(model.matrix(~.,data=test.x),label=test.y))
-  #confusionMatrix(factor(xgb.opt.pred, levels=0:6),factor(test.y, levels=0:6))
-  #r1 = toString(factor(test.y, levels=0:6))
-  #r2 = toString(factor(xgb.opt.pred, levels=0:6))
-  #ans = concat(c(ans, r1, r2), sep='\n')
+  confusionMatrix(factor(xgb.opt.pred, levels=0:6),factor(test.y, levels=0:6))
+  r1 = toString(factor(test.y, levels=0:6))
+  r2 = toString(factor(xgb.opt.pred, levels=0:6))
+  ans = concat(c(ans, r1, r2), sep='\n')
 }
-#fileName = 'xgboost_results.txt'
-#writeLines(ans, fileName)
+fileName = 'xgboost_results.txt'
+writeLines(ans, fileName)
+```
+
+```{r}
+library(caret)
+library(randomForest)
+library(bazar)
+
+ans = NA
+for (i in 1:5) {
+  partition = split_data(i)
+  test.x = partition$test[, 1:(length(partition$test)-1)]
+  test.y = partition$test[, length(partition$test)] - 1
+  to_train.x = partition$train[, 1:(length(partition$train)-1)]
+  to_train.y = partition$train[, length(partition$train)] - 1
+  
+  rf = randomForest(Cover_Type ~ ., data=partition$train, ntree=1)
+  pred = round(predict(rf, partition$test)) - 1
+  r1 = toString(factor(test.y, levels=0:6))
+  r2 = toString(factor(pred, levels=0:6))
+  ans = concat(c(ans, r1, r2), sep='\n')
+}
+fileName = 'randomForest_results.txt'
+writeLines(ans, fileName)
 ```
 
